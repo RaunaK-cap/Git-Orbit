@@ -1,6 +1,7 @@
 "use client";
 
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner"
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -35,6 +36,7 @@ export default function RootLayout({
           >
             {children}
           </ThemeProvider>
+          <Toaster position="top-center" closeButton />
         </body>
       </html>
     </ClerkProvider>
