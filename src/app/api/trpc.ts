@@ -1,3 +1,4 @@
+import { Dbclient } from "@/lib/db"
 import { auth } from "@clerk/nextjs/server"
 import { initTRPC, TRPCError } from "@trpc/server"
 
@@ -14,7 +15,8 @@ const isAuthenticated = t.middleware((async ({ ctx  , next})=>{
     return next({
         ctx:{
             ...ctx,
-            user
+            user,
+            Dbclient
         }
     })
 
