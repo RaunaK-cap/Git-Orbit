@@ -1,11 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { AppRouter } from "@/app/api/root";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 type FormInput = {
   RepoUrl: string;
@@ -15,27 +16,31 @@ type FormInput = {
 
 const Createpage = () => {
   const { register, handleSubmit } = useForm<FormInput>();
+  const [ ispending , starttransition] = useTransition()
+  const trpc = createTRPCClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url: "/api/trpc",
+      }),
+    ],
+  });
+
 
   async function onsubmit(data: FormInput) {
-    const trpc = createTRPCClient<AppRouter>({
-      links: [
-        httpBatchLink({
-          url: "/api/trpc",
-        }),
-      ],
-    });
-
-    try {
-      await trpc.project.createProject.mutate({
-        name: data.Projectname,
-        GithubURl: data.RepoUrl,
-        GithubToken: data.GithubToken,
-      });
-      toast("project created succesfully");
-    } catch (error) {
-      toast(`${error}`);
-    }
+    starttransition(async()=>{
+        try {
+            await trpc.project.createProject.mutate({
+              name: data.Projectname,
+              GithubURl: data.RepoUrl,
+              GithubToken: data.GithubToken,
+            });
+            toast("project created succesfully");
+          } catch (error) {
+            toast(`${error}`);
+          }
+      })
   }
+
   return (
     <div className="flex items-center  justify-center h-screen">
       <div>
@@ -69,7 +74,11 @@ const Createpage = () => {
               required
             />
             <div className="h-2"></div>
-            <Button type="submit">Create Project</Button>
+            <Button
+            className="w-full mt-5"  
+            disabled={ispending} type="submit"> 
+            { ispending ? <Loader2 className="animate-spin"/>:" Create Project +"}
+            </Button>
           </form>
         </div>
       </div>
