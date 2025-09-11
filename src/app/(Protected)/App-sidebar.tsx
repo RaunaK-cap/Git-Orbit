@@ -14,7 +14,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import { Bot, CreditCard, EarthIcon, EarthLock, LayoutDashboard, Presentation, ProjectorIcon } from "lucide-react";
+import { Bot, CreditCard, EarthLock, LayoutDashboard, Presentation, } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppRouter } from "../api/root";
@@ -42,24 +42,6 @@ const items = [
     icon: CreditCard,
   },
 ];
-
-const project = [
-    { 
-        Ptname: "Project1",
-        url:"",
-        icon: ProjectorIcon
-    },
-    { 
-        Ptname: "Project2",
-        url:"",
-        icon: ProjectorIcon
-    },
-    { 
-        Ptname: "Project3",
-        url:"",
-        icon: ProjectorIcon
-    }
-]
 
 const trpc = createTRPCClient<AppRouter>({
   links: [
