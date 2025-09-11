@@ -13,9 +13,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { Bot, CreditCard, EarthIcon, EarthLock, LayoutDashboard, Presentation, ProjectorIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AppRouter } from "../api/root";
+import { useEffect, useState } from "react";
 
 const items = [
   {
@@ -57,9 +60,33 @@ const project = [
         icon: ProjectorIcon
     }
 ]
+
+const trpc = createTRPCClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: "/api/trpc",
+    }),
+  ],
+});
+
+
+
 export function AppSidebar() {
   const pathname = usePathname();
   const {open }= useSidebar()
+  const [ projects , setProjects] = useState<Array<{
+    id: string; createdAt: string; updateAt: string; GithubURl: string; RepoName: string; deletedAt: string | null;
+  }>>([])
+
+  useEffect(()=>{
+    (async () => {
+      const data = await trpc.project.getproject.query()
+      console.log("your project list data is here :", data)
+      setProjects(data)
+    })()
+  } , [])
+
+
   return (
     <>
       <Sidebar className="font-sans" collapsible="icon" variant="floating">
@@ -104,13 +131,13 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
                 <SidebarMenu>
-                    { project.map((projects)=>(
-                        <SidebarMenuItem key={projects.Ptname}>
+                    { projects.slice(-3).map((projects)=>(
+                        <SidebarMenuItem key={projects.RepoName}>
                             <SidebarMenuButton asChild >
                               
-                                <Link href={projects.url} className="space-y-2">
-                                <Badge variant={"default"} > {projects.Ptname[0]}</Badge>
-                                { projects.Ptname}
+                                <Link href={""} className="space-y-2">
+                                <Badge variant={"default"} > {projects.RepoName[0]}</Badge>
+                                { projects.RepoName}
                                 </Link>
 
                             </SidebarMenuButton>
@@ -126,8 +153,6 @@ export function AppSidebar() {
                 </Link>
             </SidebarGroupContent>
           </SidebarGroup>
-
-
           <SidebarGroupContent>
 
         </SidebarGroupContent>
