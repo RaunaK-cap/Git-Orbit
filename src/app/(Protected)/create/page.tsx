@@ -17,6 +17,7 @@ type FormInput = {
 const Createpage = () => {
   const { register, handleSubmit } = useForm<FormInput>();
   const [ ispending , starttransition] = useTransition()
+
   const trpc = createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
@@ -34,6 +35,8 @@ const Createpage = () => {
               GithubURl: data.RepoUrl,
               GithubToken: data.GithubToken,
             });
+
+                        ////querying trpc to get all projects details tho ....
             toast("project created succesfully");
           } catch (error) {
             toast(`${error}`);
